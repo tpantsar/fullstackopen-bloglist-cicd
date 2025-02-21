@@ -1,0 +1,4 @@
+.gitignore
+.prettierrc
+.vite/
+node_modules
