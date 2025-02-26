@@ -78,26 +78,25 @@ jobs:
 
       - name: Notify Discord on Build Failure
         uses: Ilshidur/action-discord@08d9328877d6954120eef2b07abbc79249bb6210
-        if: failure() && !contains(github.event.head_commit.message, '#skip')
+        if: failure() && github.event_name != 'pull_request'
         with:
           args: " " # Required argument (but empty since we use DISCORD_EMBEDS)
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_EMBEDS: >
             [{
-              "title": "❌Frontend Build Failed!",
-              "description": "Commit: [${{ github.sha }}]",
+              "title": "🚨 Build Failed: ${{ github.workflow }}",
               "color": ${{env.color_failure}},
               "fields": [
                 {
-                  "name": "Commit message",
-                  "value": "${{ github.event.head_commit.message }}",
-                  "inline": false
+                  "name": "🔗 Commit",
+                  "value": "[${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
+                  "inline": true
                 },
                 {
-                  "name": "Workflow",
-                  "value": "${{ github.workflow }}",
-                  "inline": false
+                  "name": "🔄 Workflow Run",
+                  "value": "[View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                  "inline": true
                 }
               ],
               "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"

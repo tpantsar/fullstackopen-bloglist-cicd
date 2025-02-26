@@ -46,6 +46,7 @@ export const logUserIn = (username, password) => {
       dispatch(setNotification('Login successful', 'success', 5))
     } catch (exception) {
       dispatch(setNotification('Incorrect username or password', 'error', 5))
+      console.error('Error logging in:', exception)
     }
   }
 }
@@ -58,6 +59,7 @@ export const logUserOut = () => {
       dispatch(setNotification('Logout successful', 'success', 5))
     } catch (exception) {
       dispatch(setNotification('Error logging out', 'error', 5))
+      console.error('Error logging out:', exception)
     }
   }
 }
