@@ -1,15 +1,11 @@
 # This workflow will run on every push or pull request and must complete successfully for the backend workflow to trigger.
-name: Frontend Pipeline
+name: Frontend CI
 
 on:
   push:
     branches: [main, master]
-    paths:
-      - "frontend/**"
   pull_request:
     branches: [main, master]
-    paths:
-      - "frontend/**"
     types: [opened, synchronize]
 
 env:
@@ -35,35 +31,40 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-  build-lint-test:
+  frontend-ci:
+    name: Frontend CI
     runs-on: ubuntu-latest
-    name: Frontend Pipeline
+
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Ensure the full history is fetched
-          path: frontend # Checkout the code from the frontend directory
-
-      - name: cd to frontend directory
-        run: cd ./frontend
 
       - name: Print Working Directory (Debug)
         run: pwd
+
       - name: Show Directory Contents (Debug)
         run: ls -al
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
-          # cache-dependency-path: frontend/package-lock.json
           node-version: "20"
           cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+          # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
 
       - name: Build frontend
         run: npm run build
@@ -101,9 +102,3 @@ jobs:
               ],
               "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"
             }]
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Run unit tests
-        run: npm run test

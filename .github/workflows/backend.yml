@@ -1,10 +1,10 @@
-# This workflow is triggered only after the "Frontend Pipeline" workflow completes successfully.
+# This workflow is triggered only after the "Frontend CI" workflow completes successfully.
 # The deployment is triggered here, and the deployment status is notified to Discord.
-name: Backend Pipeline
+name: Backend CI
 
 on:
   workflow_run:
-    workflows: ["Frontend Pipeline"]
+    workflows: ["Frontend CI"]
     types:
       - completed
 
@@ -14,36 +14,41 @@ env:
   color_failure: 16711680 # red
 
 jobs:
-  build-lint-test:
+  backend-ci:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Backend CI
     runs-on: ubuntu-latest
-    name: Backend Pipeline
+
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Ensure the full history is fetched
-          path: backend # Checkout the code from the backend directory
-
-      - name: cd to backend directory
-        run: cd ./backend
 
       - name: Print Working Directory (Debug)
         run: pwd
+
       - name: Show Directory Contents (Debug)
         run: ls -al
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
-          # cache-dependency-path: ./backend/package-lock.json
           node-version: "20"
           cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+          # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test
 
       - name: Build Backend
         run: npm run build
@@ -77,18 +82,12 @@ jobs:
               "timestamp": "${{ github.event.workflow_run.updated_at }}"
             }]
 
-      - name: Run Linter
-        run: npm run lint
-
-      - name: Run Unit Tests
-        run: npm run test
-
   deploy:
     # only run if the commit message does not contain #skip
     if: ${{ github.event_name == 'push' && !contains(github.event.workflow_run.head_commit.message, '#skip') }}
     name: Deploy to Render
     runs-on: ubuntu-latest
-    needs: ["build-lint-test"]
+    needs: ["backend-ci"]
     steps:
       - name: Trigger Deployment
         run: |

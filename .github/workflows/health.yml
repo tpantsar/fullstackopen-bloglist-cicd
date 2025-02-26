@@ -2,7 +2,7 @@ name: Health Check
 
 on:
   workflow_run:
-    workflows: ["Backend Pipeline"]
+    workflows: ["Backend CI", "Frontend CI"]
     branches: [main, master]
     types:
       - completed
