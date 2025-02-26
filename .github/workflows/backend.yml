@@ -26,6 +26,9 @@ jobs:
           fetch-depth: 0 # Ensure the full history is fetched
           path: backend # Checkout the code from the backend directory
 
+      - name: cd to backend directory
+        run: cd ./backend
+
       - name: Print Working Directory (Debug)
         run: pwd
       - name: Show Directory Contents (Debug)
