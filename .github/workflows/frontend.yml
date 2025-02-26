@@ -42,6 +42,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Show Directory Contents (Debug)
+        run: ls -al
+
+      - name: Show Frontend Directory Contents (Debug)
+        run: ls -al ./frontend
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -60,12 +66,6 @@ jobs:
           name: build-artifact
           path: dist/
           retention-days: 7
-
-      - name: Lint code
-        run: npm run lint
-
-      - name: Run unit tests
-        run: npm run test
 
       - name: Notify Discord on Build Failure
         uses: Ilshidur/action-discord@08d9328877d6954120eef2b07abbc79249bb6210
@@ -93,3 +93,9 @@ jobs:
               ],
               "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"
             }]
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
