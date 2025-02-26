@@ -18,22 +18,24 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     name: Backend Pipeline
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Ensure the full history is fetched
-          path: ./backend
+          path: backend # Checkout the code from the backend directory
+
+      - name: Print Working Directory (Debug)
+        run: pwd
+      - name: Show Directory Contents (Debug)
+        run: ls -al
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
-          cache-dependency-path: ./backend/package-lock.json
+          # cache-dependency-path: ./backend/package-lock.json
           node-version: "20"
           cache: "npm"
 

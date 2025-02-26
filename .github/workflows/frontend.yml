@@ -4,9 +4,13 @@ name: Frontend Pipeline
 on:
   push:
     branches: [main, master]
+    paths:
+      - "frontend/**"
   pull_request:
     branches: [main, master]
-    types: [opened, synchronize] # workflow will run when a PR into the main branch is opened or updated
+    paths:
+      - "frontend/**"
+    types: [opened, synchronize]
 
 env:
   color_failure: 16711680 # red
@@ -34,20 +38,16 @@ jobs:
   build-lint-test:
     runs-on: ubuntu-latest
     name: Frontend Pipeline
-    defaults:
-      run:
-        working-directory: ./frontend
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Ensure the full history is fetched
-          path: ./frontend
+          path: frontend # Checkout the code from the frontend directory
 
       - name: Print Working Directory (Debug)
         run: pwd
-
       - name: Show Directory Contents (Debug)
         run: ls -al
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
-          cache-dependency-path: ./frontend/package-lock.json
+          # cache-dependency-path: frontend/package-lock.json
           node-version: "20"
           cache: "npm"
 
