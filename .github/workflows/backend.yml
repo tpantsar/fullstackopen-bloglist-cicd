@@ -8,10 +8,10 @@ on:
   pull_request:
     branches: [main, master]
     types: [opened, synchronize]
-  workflow_run:
-    workflows: ["Frontend CI"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Frontend CI"]
+  #   types:
+  #     - completed
 
 env:
   URL: https://fullstackopen-bloglist-cicd.onrender.com/ # URL of the deployed application
