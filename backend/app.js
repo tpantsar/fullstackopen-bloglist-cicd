@@ -21,6 +21,12 @@ app.use('/api/blogs', middleware.userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
+// Health check
+app.get('/health', (req, res) => {
+  console.log('health check')
+  res.send('ok')
+})
+
 if (config.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
   app.use('/api/testing', testingRouter)
