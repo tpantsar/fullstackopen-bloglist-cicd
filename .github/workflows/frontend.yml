@@ -1,0 +1,96 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+    types: [opened, synchronize]
+
+env:
+  color_failure: 16711680 # red
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Information
+        env:
+          COMMIT_MESSAGE: ${{ toJson(github.event.head_commit.message) }}
+          COMMITS: ${{ toJson(github.event.commits) }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "Commit Message: $COMMIT_MESSAGE"
+          echo "Commits: $COMMITS"
+          echo "Github Context: $GITHUB_CONTEXT"
+
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Print Working Directory (Debug)
+        run: pwd
+
+      - name: Show Directory Contents (Debug)
+        run: ls -al
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+          # https://github.com/actions/setup-node/tree/v4/?tab=readme-ov-file#caching-global-packages-data
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: dist/
+          retention-days: 7
+
+      - name: Notify Discord on Build Failure
+        uses: Ilshidur/action-discord@08d9328877d6954120eef2b07abbc79249bb6210
+        if: failure() && github.event_name != 'pull_request'
+        with:
+          args: " " # Required argument (but empty since we use DISCORD_EMBEDS)
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: >
+            [{
+              "title": "🚨 Build Failed: ${{ github.workflow }}",
+              "color": ${{env.color_failure}},
+              "fields": [
+                {
+                  "name": "🔗 Commit",
+                  "value": "[${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
+                  "inline": true
+                },
+                {
+                  "name": "🔄 Workflow Run",
+                  "value": "[View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+                  "inline": true
+                }
+              ],
+              "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"
+            }]
