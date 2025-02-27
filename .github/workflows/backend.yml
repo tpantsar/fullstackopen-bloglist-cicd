@@ -52,6 +52,13 @@ jobs:
       - name: Run Linter
         run: npm run lint
 
+      #- name: Run Tests with Debugger
+      #  run: npm test -- --inspect-brk
+      #  env:
+      #    DEBUG: "*"
+      #    NODE_ENV: "test"
+      #    TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+
       - name: Run Unit Tests
         run: npm run test
         env:

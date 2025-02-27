@@ -17,7 +17,7 @@ beforeEach(async () => {
   await User.deleteMany({})
 
   await Blog.insertMany(helper.initialBlogs)
-  await User.insertMany(helper.initialUsers)
+  // await User.insertMany(helper.initialUsers)
 
   // Create a user and blog for testing
   await helper.createUser(api, 'test-username', 'test-name', 'test-password')
@@ -34,12 +34,14 @@ test('blogs are returned as json', async () => {
 
 test('there are two initial blogs', async () => {
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
 
   assert.strictEqual(response.body.length, 2)
 })
 
 test('the first blog is about React patterns', async () => {
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
 
   const titles = response.body.map((blog) => blog.title)
   assert(titles.includes('React patterns'))
@@ -64,6 +66,7 @@ test('a valid blog can be added', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
   const titles = response.body.map((blog) => blog.title)
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
@@ -81,6 +84,7 @@ test('blog without token is not added', async () => {
   await api.post('/api/blogs').send(newBlog).expect(401)
 
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
@@ -97,6 +101,7 @@ test('blog without title is not added', async () => {
   await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
 
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
@@ -113,6 +118,7 @@ test('blog without url is not added', async () => {
   await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
 
   const response = await api.get('/api/blogs')
+  console.log('response.body:', response.body)
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
@@ -140,6 +146,7 @@ test('adding a blog without likes defaults to 0 likes', async () => {
 
 test('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb()
+  console.log('Blogs at start:', blogsAtStart)
   const blogToView = blogsAtStart[0]
 
   const resultBlog = await api
@@ -152,6 +159,7 @@ test('a specific blog can be viewed', async () => {
 
 test('a blog can be updated', async () => {
   const blogsAtStart = await helper.blogsInDb()
+  console.log('Blogs at start:', blogsAtStart)
   const blogToUpdate = blogsAtStart[0]
 
   const updatedBlog = { ...blogToUpdate, likes: 10 }
@@ -170,6 +178,7 @@ test('a blog can be updated', async () => {
 
 test('blog can be deleted', async () => {
   const token = await helper.getValidToken(api, 'test-username', 'test-password')
+  console.log('Token:', token)
 
   // Create a blog that is deleted later
   const blogToDelete = await helper.createBlog(
@@ -183,6 +192,7 @@ test('blog can be deleted', async () => {
 
   console.log('blogToDelete:', blogToDelete)
   const blogsAtStart = await helper.blogsInDb()
+  console.log('Blogs at start:', blogsAtStart)
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
@@ -238,14 +248,15 @@ describe('when there is initially one user at db', () => {
       password: 'salainen',
     }
 
-    const result = await api
+    const response = await api
       .post('/api/users')
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
+    console.log('response.body:', response.body)
 
     const usersAtEnd = await helper.usersInDb()
-    assert(result.body.error.includes('Username is already taken'))
+    assert(response.body.error.includes('Username is already taken'))
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })

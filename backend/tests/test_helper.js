@@ -20,20 +20,20 @@ const initialBlogs = [
   },
 ]
 
-const initialUsers = [
-  {
-    username: 'pesusieni',
-    name: 'Paavo Pesusieni',
-    blogs: [],
-    id: '66fd3dec1dd5a3ff7d17362b',
-  },
-  {
-    username: 'ankka',
-    name: 'Aku Ankka',
-    blogs: [],
-    id: 'f467jd83mnd983mf93j3hfkj',
-  },
-]
+// const initialUsers = [
+//   {
+//     username: 'pesusieni',
+//     name: 'Paavo Pesusieni',
+//     blogs: [],
+//     id: '66fd3dec1dd5a3ff7d17362b',
+//   },
+//   {
+//     username: 'ankka',
+//     name: 'Aku Ankka',
+//     blogs: [],
+//     id: 'f467jd83mnd983mf93j3hfkj',
+//   },
+// ]
 
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'willremovethissoon' })
@@ -84,21 +84,31 @@ const createBlog = async (api, token, title, author, url, likes) => {
 }
 
 const getValidToken = async (api, username, password) => {
-  const loginResponse = await api
-    .post('/api/login')
-    .send({
-      username: username,
-      password: password,
-    })
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+  try {
+    // eslint-disable-next-line no-debugger
+    debugger
+    const response = await api
+      .post('/api/login')
+      .send({
+        username: username,
+        password: password,
+      })
+      .expect('Content-Type', /application\/json/)
 
-  return loginResponse.body.token
+    if (response.status !== 200) {
+      console.error('Failed to get valid token. Status:', response.status)
+      console.error('Response body:', response.body)
+    }
+
+    return response.body.token
+  } catch (error) {
+    console.error('Error in getValidToken:', error)
+    throw error
+  }
 }
 
 module.exports = {
   initialBlogs,
-  initialUsers,
   nonExistingId,
   usersInDb,
   blogsInDb,

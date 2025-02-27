@@ -11,7 +11,9 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const tokenExtractor = (request, response, next) => {
+const tokenExtractor = (error, request, response, next) => {
+  // console.error('Error middleware caught an error:', error.message)
+  // console.error(error.stack)
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
