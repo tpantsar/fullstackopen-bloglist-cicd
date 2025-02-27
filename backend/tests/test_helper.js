@@ -20,21 +20,6 @@ const initialBlogs = [
   },
 ]
 
-// const initialUsers = [
-//   {
-//     username: 'pesusieni',
-//     name: 'Paavo Pesusieni',
-//     blogs: [],
-//     id: '66fd3dec1dd5a3ff7d17362b',
-//   },
-//   {
-//     username: 'ankka',
-//     name: 'Aku Ankka',
-//     blogs: [],
-//     id: 'f467jd83mnd983mf93j3hfkj',
-//   },
-// ]
-
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'willremovethissoon' })
   await blog.save()

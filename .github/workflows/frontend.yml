@@ -13,23 +13,17 @@ env:
 
 jobs:
   log:
-    name: Log Information
     runs-on: ubuntu-latest
     steps:
-      - name: Log Commit Message
+      - name: Log Information
         env:
           COMMIT_MESSAGE: ${{ toJson(github.event.head_commit.message) }}
-        run: echo "$COMMIT_MESSAGE"
-
-      - name: Log Commits
-        env:
           COMMITS: ${{ toJson(github.event.commits) }}
-        run: echo "$COMMITS"
-
-      - name: log Github context
-        env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+        run: |
+          echo "Commit Message: $COMMIT_MESSAGE"
+          echo "Commits: $COMMITS"
+          echo "Github Context: $GITHUB_CONTEXT"
 
   frontend-ci:
     name: Frontend CI

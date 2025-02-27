@@ -9,10 +9,6 @@ on:
   pull_request:
     branches: [main, master]
     types: [opened, synchronize]
-  # workflow_run:
-  #   workflows: ["Frontend CI"]
-  #   types:
-  #     - completed
 
 env:
   URL: https://fullstackopen-bloglist-cicd.onrender.com/ # URL of the deployed application
@@ -52,54 +48,11 @@ jobs:
       - name: Run Linter
         run: npm run lint
 
-      #- name: Run Tests with Debugger
-      #  run: npm test -- --inspect-brk
-      #  env:
-      #    DEBUG: "*"
-      #    NODE_ENV: "test"
-      #    TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-
       - name: Run Unit Tests
         run: npm run test
         env:
           NODE_ENV: "test"
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
-
-      - name: Build Backend
-        run: npm run build
-
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifact
-          path: dist/
-          retention-days: 7
-
-      - name: Notify Discord on Build Failure
-        uses: Ilshidur/action-discord@08d9328877d6954120eef2b07abbc79249bb6210
-        if: failure() && github.event_name != 'pull_request'
-        with:
-          args: " " # Required argument (but empty since we use DISCORD_EMBEDS)
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: >
-            [{
-              "title": "🚨 Build Failed: ${{ github.workflow }}",
-              "color": ${{env.color_failure}},
-              "fields": [
-                {
-                  "name": "🔗 Commit",
-                  "value": "[${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
-                  "inline": true
-                },
-                {
-                  "name": "🔄 Workflow Run",
-                  "value": "[View Logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
-                  "inline": true
-                }
-              ],
-              "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"
-            }]
 
   deploy:
     # only run if the commit message does not contain #skip
