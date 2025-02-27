@@ -1,5 +1,6 @@
 # This workflow is triggered only after the "Frontend CI" workflow completes successfully.
 # The deployment is triggered here, and the deployment status is notified to Discord.
+# https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
 name: Backend CI
 
 on:
@@ -53,6 +54,9 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run test
+        env:
+          NODE_ENV: "test"
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
 
       - name: Build Backend
         run: npm run build
