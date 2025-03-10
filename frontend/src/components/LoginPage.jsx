@@ -12,6 +12,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { logUserIn } from '../reducers/userReducer'
+import { createUser } from '../reducers/usersReducer'
 import Notification from './Notification'
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -68,9 +69,9 @@ export default function LoginPage() {
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
 
-  const handleSubmit = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault()
-    console.log('handleSubmit')
+    console.log('handleLogin')
     console.log('username', username)
     console.log('password', password)
 
@@ -80,6 +81,23 @@ export default function LoginPage() {
     }
 
     dispatch(logUserIn(username, password))
+  }
+
+  const handleSignUp = (event) => {
+    event.preventDefault()
+    console.log('Sign up button clicked')
+
+    if (!validateInputs()) {
+      console.log(usernameError, passwordError)
+      return
+    }
+
+    const newUser = {
+      username: username,
+      password: password,
+    }
+
+    dispatch(createUser(newUser))
   }
 
   const validateInputs = () => {
@@ -121,7 +139,7 @@ export default function LoginPage() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleLogin}
             noValidate
             sx={{
               display: 'flex',
@@ -156,14 +174,20 @@ export default function LoginPage() {
                 type="password"
                 name="password"
                 placeholder="••••••"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
               />
             </FormControl>
             <Button type="submit" fullWidth variant="contained">
-              Log in
+              Login
+            </Button>
+            <Button
+              onClick={(e) => handleSignUp(e)}
+              fullWidth
+              variant="contained"
+            >
+              Sign up
             </Button>
           </Box>
         </Card>

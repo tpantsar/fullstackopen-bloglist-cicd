@@ -7,7 +7,7 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-    types: [opened, synchronize]
+    types: [opened, synchronize, closed]
 
 env:
   URL: https://fullstackopen-bloglist-cicd.onrender.com/ # URL of the deployed application
@@ -83,16 +83,24 @@ jobs:
               "timestamp": "${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at }}"
             }]
 
+  # https://github.com/anothrNick/github-tag-action/tree/f278d49d30cdd8775cc3e7dd00b5ee11686ee297/?tab=readme-ov-file#usage
+  # https://github.com/anothrNick/github-tag-action/tree/f278d49d30cdd8775cc3e7dd00b5ee11686ee297/?tab=readme-ov-file#workflow
   tag_release:
-    # only run if the commit message does not contain #skip
-    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
-    name: Tag Release
-    runs-on: ubuntu-latest
+    # only run on merged pull requests and if the commit message does not contain #skip
+    if: ${{ github.event.pull_request.merged == true && !contains(github.event.head_commit.message, '#skip') }}
     needs: ["deploy"]
+
+    name: Tag Release
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write # Ensure write access to push tags
+
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 0 # Ensure the full history is fetched
+
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@f278d49d30cdd8775cc3e7dd00b5ee11686ee297
         env:

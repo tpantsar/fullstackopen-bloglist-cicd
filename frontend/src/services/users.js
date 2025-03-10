@@ -6,4 +6,9 @@ const getAll = () => {
   return request.then((response) => response.data)
 }
 
-export default { getAll }
+const createUser = (newObject) => {
+  const request = apiClient.post(resourceUrl, newObject)
+  return request.then((response) => response.data)
+}
+
+export default { getAll, createUser }

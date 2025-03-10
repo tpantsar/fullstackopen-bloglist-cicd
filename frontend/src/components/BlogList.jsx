@@ -28,10 +28,6 @@ const BlogList = ({ user }) => {
   // Sort blogs by likes in descending order (highest likes first)
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
-  if (sortedBlogs.length === 0) {
-    return <div>No blogs available</div>
-  }
-
   return (
     <>
       <Box textAlign="left" sx={{ mt: 1, mb: 1 }}>
