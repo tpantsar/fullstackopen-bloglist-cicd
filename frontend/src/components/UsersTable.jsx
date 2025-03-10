@@ -28,6 +28,7 @@ const UsersTable = ({ users }) => {
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id}>
+                <TableCell align="left">{user.name}</TableCell>
                 <TableCell align="left">
                   <MuiLink
                     component={Link}
@@ -35,10 +36,9 @@ const UsersTable = ({ users }) => {
                     underline="hover"
                     to={`/users/${user.id}`}
                   >
-                    {user.name}
+                    {user.username}
                   </MuiLink>
                 </TableCell>
-                <TableCell align="left">{user.username}</TableCell>
                 <TableCell align="left">{user.blogs.length}</TableCell>
               </TableRow>
             ))}

@@ -31,5 +31,19 @@ export const initUsers = () => {
   }
 }
 
+// Create new user
+export const createUser = (newUser) => {
+  return async (dispatch) => {
+    try {
+      const user = await userService.createUser(newUser)
+      initUsers()
+      dispatch(setNotification(`User ${user.username} created`, 'success', 5))
+    } catch (error) {
+      console.error('Error creating user:', error)
+      dispatch(setNotification('Error creating user', 'error', 5))
+    }
+  }
+}
+
 export const { setUsers } = usersSlice.actions
 export default usersSlice.reducer
