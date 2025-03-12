@@ -1,3 +1,9 @@
+## Connecting to MongoDB Atlas from Render
+
+https://www.mongodb.com/community/forums/t/cant-connect-to-mongodb-atlas-from-render-web-hosted-app/192110/5
+
+https://render.com/docs/connect-to-mongodb-atlas
+
 ## node_volumes directory needs to be added as a volume in docker-compose.yml
 
 https://stackoverflow.com/a/60194067

@@ -6,7 +6,15 @@ const User = require('./models/user')
 const config = require('../utils/config')
 const logger = require('../utils/logger')
 
+logger.info('Initializing MongoDB connection in backend/mongo/index.js')
+
 const MONGO_URL = config.MONGODB_URI
+logger.info('MONGO_URL:', MONGO_URL)
+
+if (!MONGO_URL) {
+  logger.error('❌ MONGODB_URI is not set. Check Render environment variables.')
+  process.exit(1) // Stop the process if MongoDB URI is missing
+}
 
 if (MONGO_URL && !mongoose.connection.readyState) {
   mongoose.set('strictQuery', false)
