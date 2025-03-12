@@ -18,6 +18,13 @@ export default function Menu({ user }) {
     navigate('/')
   }
 
+  // Display the user's name if it exists, otherwise display the username
+  const username = user && user.name ? user.name : user.username
+
+  console.log('user.name:', user.name)
+  console.log('user.username:', user.username)
+  console.log('username:', username)
+
   return (
     <AppBar position="static" sx={{ mb: 3, borderRadius: 1 }}>
       <Toolbar>
@@ -30,7 +37,7 @@ export default function Menu({ user }) {
         {user ? (
           <Box sx={{ ml: 'auto' }}>
             <Typography variant="body1" color="inherit" component="div">
-              {user.name} logged in{' '}
+              {username} logged in{' '}
               <Button color="error" variant="contained" onClick={handleLogout}>
                 Log out
               </Button>
