@@ -4,6 +4,7 @@ const path = require('path')
 const app = express()
 require('express-async-errors')
 const cors = require('cors')
+const { mongoose } = require('./mongo')
 
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
@@ -27,17 +28,12 @@ app.use('/api/login', loginRouter)
 // Health check
 app.get('/health', (req, res) => {
   console.log('health check')
-  res.send('ok')
+  res.json({ status: 'ok', mongoDB: !!mongoose.connection.readyState })
 })
 
 // Serve API routes
 app.use('/api', (req, res) => {
   res.json({ message: 'API works!' })
-})
-
-// Serve the frontend app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
 if (config.NODE_ENV === 'test') {

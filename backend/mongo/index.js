@@ -22,7 +22,7 @@ if (MONGO_URL && !mongoose.connection.readyState) {
   //logger.info('Connecting to MongoDB ...')
   logger.info(`Connecting to MongoDB at ${MONGO_URL}`)
 
-  mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(MONGO_URL)
 
   mongoose.connection.once('open', () => {
     logger.info('Successfully connected to MongoDB')
@@ -38,6 +38,7 @@ if (MONGO_URL && !mongoose.connection.readyState) {
 }
 
 module.exports = {
+  mongoose,
   Blog,
   User,
 }
