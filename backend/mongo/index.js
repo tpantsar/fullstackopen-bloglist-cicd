@@ -11,15 +11,21 @@ const MONGO_URL = config.MONGODB_URI
 if (MONGO_URL && !mongoose.connection.readyState) {
   mongoose.set('strictQuery', false)
 
-  logger.info('Connecting to MongoDB ...')
-  mongoose.connect(MONGO_URL)
+  //logger.info('Connecting to MongoDB ...')
+  logger.info(`Connecting to MongoDB at ${MONGO_URL}`)
+
+  mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 
   mongoose.connection.once('open', () => {
-    console.log('Successfully connected to MongoDB')
+    logger.info('Successfully connected to MongoDB')
   })
 
   mongoose.connection.on('error', (error) => {
-    console.log('Error connecting to MongoDB:', error)
+    logger.info('Error connecting to MongoDB:', error)
+  })
+
+  mongoose.connection.on('disconnected', () => {
+    logger.warn('MongoDB connection lost')
   })
 }
 
