@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-// Used in local development
-const localBaseURL = 'http://localhost:3001/api'
+// Default base URL for local development
+const localBaseURL = '/api'
 
-// Used in production
+// Used in production with nginx reverse proxy
 // VITE_BACKEND_URL='http://localhost:8080/api'
 
 const apiClient = axios.create({

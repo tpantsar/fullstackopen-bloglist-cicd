@@ -86,10 +86,10 @@ jobs:
   # https://github.com/anothrNick/github-tag-action/tree/f278d49d30cdd8775cc3e7dd00b5ee11686ee297/?tab=readme-ov-file#usage
   # https://github.com/anothrNick/github-tag-action/tree/f278d49d30cdd8775cc3e7dd00b5ee11686ee297/?tab=readme-ov-file#workflow
   tag_release:
-    # only run on merged pull requests and if the commit message does not contain #skip
-    if: ${{ github.event.pull_request.merged == true && !contains(github.event.head_commit.message, '#skip') }}
-    needs: ["deploy"]
+    # only run if the commit message does not contain #skip
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}
 
+    needs: ["deploy"]
     name: Tag Release
     runs-on: ubuntu-22.04
     permissions:
