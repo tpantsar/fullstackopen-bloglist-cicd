@@ -10,8 +10,8 @@ const MONGO_URL = config.MONGODB_URI
 
 if (MONGO_URL && !mongoose.connection.readyState) {
   mongoose.set('strictQuery', false)
-  logger.info('connecting to', MONGO_URL)
 
+  logger.info('Connecting to MongoDB ...')
   mongoose.connect(MONGO_URL)
 
   mongoose.connection.once('open', () => {

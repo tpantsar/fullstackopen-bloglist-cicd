@@ -3,4 +3,7 @@ const config = require('./utils/config')
 
 const PORT = config.PORT
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+  console.log('NODE_ENV:', config.NODE_ENV)
+})
