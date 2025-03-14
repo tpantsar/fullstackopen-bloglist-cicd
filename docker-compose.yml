@@ -11,6 +11,16 @@ services:
       - ./backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
       - ./backend/mongo_data:/data/db
 
+  frontend:
+    image: bloglist-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/:/usr/src/app
+    depends_on:
+      - mongo
+
   backend:
     image: bloglist-backend
     container_name: bloglist-backend
@@ -25,32 +35,8 @@ services:
       - ./backend/:/usr/src/app
       - /usr/src/app/node_modules # https://stackoverflow.com/a/60194067
     depends_on:
-      - mongo
-
-  frontend:
-    image: bloglist-frontend
-    container_name: bloglist-frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - VITE_BACKEND_URL=http://localhost:8080/api
-    volumes:
-      - ./frontend/:/usr/src/app
-      - /usr/src/app/node_modules # https://stackoverflow.com/a/60194067
-    depends_on:
-      - backend
-
-  nginx:
-    image: nginx:alpine
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - 8080:80
-    depends_on: # Wait for the backend and frontend to be ready
-      - backend
       - frontend
+      - mongo
 
 volumes:
   mongo_data:

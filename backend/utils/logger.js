@@ -12,7 +12,14 @@ const error = (...params) => {
   }
 }
 
+const warn = (...params) => {
+  if (config.NODE_ENV !== 'test') {
+    console.warn(...params)
+  }
+}
+
 module.exports = {
   info,
   error,
+  warn,
 }
