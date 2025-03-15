@@ -35,6 +35,15 @@ docker compose up -d --build
 docker-compose down && docker-compose up -d --build
 ```
 
+## Run Github Actions locally:
+
+```bash
+sudo apt install gh
+gh extension install https://github.com/nektos/gh-act
+cd fullstackopen-bloglist-cicd
+gh act --secret-file backend/.env -j 'backend-ci'
+```
+
 ## Other commands:
 
 ```bash
