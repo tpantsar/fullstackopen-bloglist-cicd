@@ -1,3 +1,9 @@
+## fullstackopen-bloglist-cicd
+
+The bloglist application built in the Full Stack Open course, with CI/CD pipeline.
+Backend is built with Node.js, Express, and MongoDB.
+It serves as a RESTful API (express.static) for the frontend, which is built with React.
+
 ## Connecting to MongoDB Atlas from Render
 
 https://www.mongodb.com/community/forums/t/cant-connect-to-mongodb-atlas-from-render-web-hosted-app/192110/5
@@ -27,6 +33,15 @@ docker compose -f docker-compose.dev.yml up -d --build
 ```bash
 docker compose up -d --build
 docker-compose down && docker-compose up -d --build
+```
+
+## Run Github Actions locally:
+
+```bash
+sudo apt install gh
+gh extension install https://github.com/nektos/gh-act
+cd fullstackopen-bloglist-cicd
+gh act --secret-file backend/.env -j 'backend-ci'
 ```
 
 ## Other commands:

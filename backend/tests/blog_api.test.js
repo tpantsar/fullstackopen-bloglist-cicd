@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 
 const helper = require('./test_helper')
 
-const Blog = require('../mongo/models/blog')
+const { Blog } = require('../mongo')
 const { User } = require('../mongo')
 
 // Reset the initial state of the database before each test
