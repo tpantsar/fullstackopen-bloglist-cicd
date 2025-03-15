@@ -1,6 +1,5 @@
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -8,8 +7,7 @@ const bcrypt = require('bcrypt')
 
 const helper = require('./test_helper')
 
-const { Blog } = require('../mongo')
-const { User } = require('../mongo')
+const { mongoose, Blog, User } = require('../mongo')
 
 // Reset the initial state of the database before each test.
 // To ensure that the _id values are not hardcoded, let MongoDB generate them automatically.
@@ -17,6 +15,9 @@ const { User } = require('../mongo')
 beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
+
+  // The database is dropped and recreated before each test
+  await mongoose.connection.dropDatabase()
 
   // Create test blogs
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog))
