@@ -1,6 +1,5 @@
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -8,21 +7,28 @@ const bcrypt = require('bcrypt')
 
 const helper = require('./test_helper')
 
-const { Blog } = require('../mongo')
-const { User } = require('../mongo')
+const { mongoose, Blog, User } = require('../mongo')
 
-// Reset the initial state of the database before each test
+// Reset the initial state of the database before each test.
+// To ensure that the _id values are not hardcoded, let MongoDB generate them automatically.
+// This can be done by creating new Blog objects based on the initialBlogs array and saving them to the database.
 beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
 
-  await Blog.insertMany(helper.initialBlogs)
-  // await User.insertMany(helper.initialUsers)
+  // The database is dropped and recreated before each test
+  await mongoose.connection.dropDatabase()
 
-  // Create a user and blog for testing
+  // Create test blogs
+  const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog))
+  const promiseArray = blogObjects.map((blog) => blog.save())
+  await Promise.all(promiseArray)
+
+  // Create a test user
   await helper.createUser(api, 'test-username', 'test-name', 'test-password')
 
   console.log('resetted database')
+  console.log('initialBlogs.length:', helper.initialBlogs.length)
 })
 
 test('blogs are returned as json', async () => {
