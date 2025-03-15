@@ -1,5 +1,4 @@
-const { Blog } = require('../mongo')
-const { User } = require('../mongo')
+const { User, Blog } = require('../mongo')
 
 const initialBlogs = [
   {
