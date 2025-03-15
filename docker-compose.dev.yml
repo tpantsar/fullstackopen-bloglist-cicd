@@ -37,21 +37,12 @@ services:
       - 5173:5173
     environment:
       - NODE_ENV=development
+      - VITE_BACKEND_URL=/api
     volumes:
       - ./frontend/:/usr/src/app # Build volume in the frontend directory
       - /usr/src/app/node_modules # https://stackoverflow.com/a/60194067
     depends_on:
       - backend
-
-  nginx:
-    image: nginx:alpine
-    volumes:
-      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - 8080:80
-    depends_on: # Wait for the backend and frontend to be ready
-      - backend
-      - frontend
 
 volumes:
   mongo_data:

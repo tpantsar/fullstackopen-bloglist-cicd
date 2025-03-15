@@ -1,3 +1,9 @@
+## fullstackopen-bloglist-cicd
+
+The bloglist application built in the Full Stack Open course, with CI/CD pipeline.
+Backend is built with Node.js, Express, and MongoDB.
+It serves as a RESTful API (express.static) for the frontend, which is built with React.
+
 ## Connecting to MongoDB Atlas from Render
 
 https://www.mongodb.com/community/forums/t/cant-connect-to-mongodb-atlas-from-render-web-hosted-app/192110/5
