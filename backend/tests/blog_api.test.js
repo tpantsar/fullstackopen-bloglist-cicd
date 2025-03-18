@@ -12,19 +12,26 @@ const { mongoose, Blog, User } = require('../mongo')
 // To ensure that the _id values are not hardcoded, let MongoDB generate them automatically.
 // This can be done by creating new Blog objects based on the initialBlogs array and saving them to the database.
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  await User.deleteMany({})
-
   // The database is dropped and recreated before each test
   await mongoose.connection.dropDatabase()
 
+  await Blog.deleteMany({})
+  await User.deleteMany({})
+
+  // Ensure operations complete before continuing
+  const countBlogs = await Blog.countDocuments()
+  const countUsers = await User.countDocuments()
+  console.log(`Database reset: ${countBlogs} blogs, ${countUsers} users`)
+
   // Create test blogs
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog))
-  const promiseArray = blogObjects.map((blog) => blog.save())
-  await Promise.all(promiseArray)
+  await Blog.insertMany(blogObjects)
 
   // Create a test user
   await helper.createUser(api, 'test-username', 'test-name', 'test-password')
+
+  const users = await helper.usersInDb()
+  console.log('Users after database reset:', users)
 
   console.log('resetted database')
   console.log('initialBlogs.length:', helper.initialBlogs.length)
